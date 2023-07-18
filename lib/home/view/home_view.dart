@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:noise_meter/noise_meter.dart';
 import 'package:noise_ninja/home/home.dart';
 
 class HomeView extends StatelessWidget {
@@ -32,10 +35,28 @@ class _HomeBodyState extends State<_HomeBody> {
     super.dispose();
   }
 
+  Future<StreamSubscription<NoiseReading>> start(
+      {required NoiseMeter noiseMeter, required bool isRecording}) async {
+    return noiseMeter.noise.listen(
+      (NoiseReading noiseReading) {
+        if (!isRecording) {
+          isRecording = true;
+        }
+        context.read<HomeBloc>().add(
+              UpdateReadings(
+                latestReading: noiseReading,
+                isRecording: isRecording,
+              ),
+            );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRecording =
         context.select((HomeBloc bloc) => bloc.state.isRecording);
+    final noiseMeter = context.select((HomeBloc bloc) => bloc.state.noiseMeter);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -44,8 +65,18 @@ class _HomeBodyState extends State<_HomeBody> {
             ? () {
                 context.read<HomeBloc>().add(StopRecording());
               }
-            : () {
-                context.read<HomeBloc>().add(StartRecording());
+            : () async {
+                final noiseSubscription = await start(
+                  noiseMeter: noiseMeter!,
+                  isRecording: isRecording,
+                );
+                if (context.mounted) {
+                  context.read<HomeBloc>().add(
+                        StartRecording(
+                          noiseSubscription: noiseSubscription,
+                        ),
+                      );
+                }
               },
         child: isRecording ? const Icon(Icons.stop) : const Icon(Icons.mic),
       ),
@@ -68,6 +99,7 @@ class _HomeContent extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(25),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               margin: const EdgeInsets.only(top: 20),

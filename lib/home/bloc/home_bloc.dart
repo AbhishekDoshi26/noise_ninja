@@ -13,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<StartRecording>(_onStartRecording);
     on<StopRecording>(_onStopRecording);
     on<DisposeNoiseMeter>(_onDisposeNoiseMeter);
+    on<UpdateReadings>(_onUpdateReadings);
   }
 
   void _onInitializeNoiseMeter(
@@ -33,19 +34,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) {
     try {
-      final noiseSubscription = state.noiseMeter?.noise.listen(
-        (NoiseReading noiseReading) {
-          bool isRecording = state.isRecording;
-          if (!isRecording) {
-            isRecording = true;
-          }
-          emit(state.copyWith(
-            latestReading: noiseReading,
-            isRecording: isRecording,
-          ));
-        },
-      );
-      emit(state.copyWith(noiseSubscription: noiseSubscription));
+      emit(state.copyWith(noiseSubscription: event.noiseSubscription));
     } catch (err) {
       emit(
         state.copyWith(
@@ -54,6 +43,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+  }
+
+  void _onUpdateReadings(
+    UpdateReadings event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(state.copyWith(
+      latestReading: event.latestReading,
+      isRecording: event.isRecording,
+    ));
   }
 
   void _onStopRecording(
