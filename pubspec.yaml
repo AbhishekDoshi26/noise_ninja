@@ -16,12 +16,23 @@ dependencies:
   noise_meter: ^4.0.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
+  flutter_native_splash: ^2.3.1
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.jpg"
+
+flutter_native_splash:
+  color: "#2C2128"
+  android_12:
+    color: "#2C2128"

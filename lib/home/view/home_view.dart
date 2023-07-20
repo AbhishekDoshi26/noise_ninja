@@ -109,11 +109,11 @@ class _HomeContent extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 20),
               child: Text(
-                'Noise: ${latestReading?.meanDecibel} dB',
+                'Noise: ${latestReading?.meanDecibel ?? 0} dB',
               ),
             ),
             Text(
-              'Max: ${latestReading?.maxDecibel} dB',
+              'Max: ${latestReading?.maxDecibel ?? 0} dB',
             )
           ],
         ),

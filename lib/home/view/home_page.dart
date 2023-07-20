@@ -5,7 +5,7 @@ import 'package:noise_ninja/home/home.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  Route<void> createRoute() {
+  static Route<void> route() {
     return MaterialPageRoute(
       builder: (context) {
         return const HomePage();
