@@ -60,6 +60,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     try {
+      emit(state.copyWith(
+        isRecording: false,
+      ));
       await state.noiseSubscription?.cancel();
 
       emit(
